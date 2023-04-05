@@ -25,5 +25,12 @@ contactRouter.get('/:id([0-9]+)', (req, res) => {
     }]);
 })
 
+contactRouter.post('/', (req, res) => {
+    res.send({
+        status: 201,
+        message: "created"
+    })
+})
+
 export default contactRouter;
 
