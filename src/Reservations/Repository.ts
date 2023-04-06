@@ -1,9 +1,11 @@
 import Joi, { ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
+import idService from '../services/idService';
+import createReservationDTO from './dto/createReservation.dto';
 import { Reservation, ReservationSchema } from './Model';
 
 
-export class ReservationsRepository implements IRepository<Reservation> {
+export class ReservationsRepository implements IRepository<Reservation, createReservationDTO> {
     reservations: Reservation[];
 
     constructor() {
@@ -14,11 +16,11 @@ export class ReservationsRepository implements IRepository<Reservation> {
         return this.reservations;
     }
 
-    getOne(id: number): Reservation | void {
+    getOne(id: string): Reservation | void {
         return this.reservations.find(r => r.id == id)
     }
 
-    deleteOne(id: number): boolean {
+    deleteOne(id: string): boolean {
         const index = this.reservations.findIndex(r => r.id == id)
 
 
@@ -30,23 +32,27 @@ export class ReservationsRepository implements IRepository<Reservation> {
         return true;
     }
 
-    createOne(object: Reservation): void | ValidationErrorItem[] {
-        object.cancelled = false;
+    createOne(object: createReservationDTO): void | ValidationErrorItem[] {
+        const reservation: Reservation = {
+            ...object, 
+            cancelled: false,
+            id: idService(),
+            price: 1.00
+        }
 
         if (object.dateStart > object.dateEnd
             || object.dateStart < new Date()) {
             throw Error("Invalid reservation Date.")
         }
 
-        object.id = this.reservations.length;
 
-        const validationResult = ReservationSchema.validate(object)
+        const validationResult = ReservationSchema.validate(reservation)
 
         if (validationResult.error) {
             return validationResult.error.details
         }
 
-        this.reservations.push(object);
+        this.reservations.push(reservation);
 
     }
 }

@@ -1,9 +1,10 @@
 import Joi, { ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
+import idService from '../services/idService';
 import { User, UserSchema } from './Model';
 
 
-export class UsersRepository implements IRepository<User> {
+export class UsersRepository implements IRepository<User, User> {
     users: User[];
 
     constructor() {
@@ -14,11 +15,11 @@ export class UsersRepository implements IRepository<User> {
         return this.users;
     }
 
-    getOne(id: number): User | void  {
+    getOne(id: string): User | void  {
         return this.users.find(u => u.id == id)
     }
 
-    deleteOne(id: number): boolean {
+    deleteOne(id: string): boolean {
         const index = this.users.findIndex(u => u.id == id)
 
 
@@ -31,7 +32,7 @@ export class UsersRepository implements IRepository<User> {
     }
 
     createOne(object: User): void | ValidationErrorItem[] {
-        object.id = this.users.length;
+        object.id = idService();
 
         const validationResult = UserSchema.validate(object)
 
