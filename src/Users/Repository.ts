@@ -9,6 +9,19 @@ export class UsersRepository implements IRepository<User, User> {
 
     constructor() {
         this.users = [];
+
+        // Push admin
+        this.users.push({
+            id: "f15d5fc6-1ece-4571-857d-528a98e1811f",
+            name: "Calamar",
+            surname: "Carlo",
+            username: "BigBoss",
+            password: process.env.ADMIN_PASSWORD ?? "secret",
+            role: "admin"
+        })
+
+        //remove when app ready
+        
     }
 
     getAll(): User[] {
@@ -17,6 +30,10 @@ export class UsersRepository implements IRepository<User, User> {
 
     getOne(id: string): User | void  {
         return this.users.find(u => u.id == id)
+    }
+
+    getOneByUsername(username: string): User | void {
+        return this.users.find(u => u.username == username);
     }
 
     deleteOne(id: string): boolean {

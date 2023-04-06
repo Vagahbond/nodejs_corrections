@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authMiddleware from "../middlewares/authMiddleware";
 import roomsRepository from "./Repository";
 
 const roomsController = Router();
@@ -23,7 +24,7 @@ roomsController.get("/:id", (req, res) => {
     res.status(200).send(room)
 })
 
-roomsController.post("/", (req, res) => {
+roomsController.post("/", authMiddleware(["admin"]), (req, res) => {
     const errors = roomsRepository.createOne(
         req.body
     )
@@ -43,7 +44,7 @@ roomsController.post("/", (req, res) => {
     })
 })
 
-roomsController.delete("/:id", (req, res) => {
+roomsController.delete("/:id", authMiddleware(["admin"]), (req, res) => {
     if (roomsRepository.deleteOne(req.params.id)) {
         res.status(204).send()
         return;

@@ -1,10 +1,11 @@
 import Joi, { ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
+import CreateRoomDTO from './DTO/createRoom.dto';
 import { Room, RoomSchema } from './Model';
 
 
-export class RoomsRepository implements IRepository<Room, Room> {
+export class RoomsRepository implements IRepository<Room, CreateRoomDTO> {
     rooms: Room[];
 
     constructor() {
@@ -31,8 +32,11 @@ export class RoomsRepository implements IRepository<Room, Room> {
         return true;
     }
 
-    createOne(object: Room): void | ValidationErrorItem[] {
-        object.id = idService();
+    createOne(object: CreateRoomDTO): void | ValidationErrorItem[] {
+        const room = {
+            ...object,
+            id: idService()
+        };
 
         const validationResult = RoomSchema.validate(object)
 
@@ -40,7 +44,7 @@ export class RoomsRepository implements IRepository<Room, Room> {
             return validationResult.error.details
         }
 
-        this.rooms.push(object);
+        this.rooms.push(room);
 
     }
 }
