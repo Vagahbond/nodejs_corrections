@@ -1,4 +1,5 @@
 import { ValidationError, ValidationErrorItem } from 'joi';
+import NotFoundError from '../errors/NotFoundError';
 import IRepository from '../interfaces/IRepository'
 import User, { IUser, UserValidationSchema } from './Model';
 
@@ -32,7 +33,7 @@ export class UsersRepository implements IRepository<IUser, IUser> {
 
 
         const validationResult = UserValidationSchema.validate(object)
-    
+
         if (validationResult.error) {
             return validationResult.error.details
         }

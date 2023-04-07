@@ -7,18 +7,20 @@ const authController = Router();
 
 authController.post("/login", async (req, res) => {
     const user = await usersRepository.getOneByUsername(req.body.username)
+
     if (!user) {
-        res.status(404).send({
-            status: 404,
-            message: "User not found"
+        res.status(401).send({
+            status: 401,
+            message: "Invalid credentials"
         })
         return
     }
 
+
     if (user.password !== req.body.password) {
-        res.status(400).send({
-            status: 400,
-            message: "Wrong username or password"
+        res.status(401).send({
+            status: 401,
+            message: "Invalid credentials"
         })
         return
     }
