@@ -1,4 +1,6 @@
 import Joi, { ValidationErrorItem } from 'joi';
+import NotFoundError from '../errors/NotFoundError';
+import ValidationError from '../errors/ValidationError';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
 import createReservationDTO from './dto/createReservation.dto';
@@ -11,6 +13,17 @@ export class ReservationsRepository implements IRepository<Reservation, createRe
 
     constructor() {
         this.reservations = [];
+
+        this.reservations.push({
+            id: "f15d5fc6-1ece-4571-857d-52938471811f",
+            dateStart: new Date(),
+            dateEnd: new Date(),
+            cancelled: false,
+            price: 1.00,
+            userId: "f15d5fc6-1ece-4571-857d-528a98e1811f",
+            roomId: "f15d5fc6-1ece-4571-857d-456a98e1811f"
+        })
+
     }
 
     getAll(): Reservation[] {
@@ -57,28 +70,29 @@ export class ReservationsRepository implements IRepository<Reservation, createRe
 
     }
 
-    updateOne(id: string, updateDTO: updateReservationDto): Reservation | ValidationErrorItem[] | void {
-        let reservation = this.reservations
-            .find(r => r.id == id)
+    updateOne(id: string, updateDTO: updateReservationDto): Reservation {
+        let index = this.reservations
+            .findIndex(r => r.id == id)
 
-        if (reservation === undefined) {
-            return;
+        if (index === -1) {
+            throw new NotFoundError("No reservation with this ID.")
         }
 
         const newReservation = {
-            ...reservation,
+            ...this.reservations[index],
             ...updateDTO
         }
 
         const validateResult = ReservationSchema.validate(newReservation);
 
         if (validateResult.error) {
-            return validateResult.error.details
+            throw new ValidationError("Invalid request body", validateResult.error.details)
         }
 
-        reservation = newReservation;
+        this.reservations[index] = newReservation
 
-        return newReservation;
+
+        return this.reservations[index];
     }
 }
 

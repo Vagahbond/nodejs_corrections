@@ -10,13 +10,20 @@ export class RoomsRepository implements IRepository<Room, CreateRoomDTO> {
 
     constructor() {
         this.rooms = [];
+
+        this.rooms.push({
+            id: "f15d5fc6-1ece-4571-857d-456a98e1811f",
+            price: 50.00,
+            floor: 1,
+            number: 1,
+        })
     }
 
     getAll(): Room[] {
         return this.rooms;
     }
 
-    getOne(id: string): Room | void  {
+    getOne(id: string): Room | void {
         return this.rooms.find(r => r.id == id)
     }
 

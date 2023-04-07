@@ -1,4 +1,4 @@
-export default interface {
+export default interface updateReservationDto{
     dateStart?: Date;
     dateEnd?: Date;
     price?: number;

@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 const app = express();
 
 app.use(bodyParser.json())
-app.use(jwt.init(configService.JWT_SECRET, { cookies: false}))
+app.use(jwt.init(configService.JWT_SECRET, { cookies: false, stales: 3600000}))
 app.use(cookieParser())
 
 app.get('/', (req, res) => {
