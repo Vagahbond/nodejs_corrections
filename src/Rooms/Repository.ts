@@ -2,7 +2,7 @@ import Joi, { ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
 import CreateRoomDTO from './DTO/createRoom.dto';
-import { Room, RoomSchema } from './Model';
+import { Room, RoomValidationSchema } from './Model';
 
 
 export class RoomsRepository implements IRepository<Room, CreateRoomDTO> {
@@ -45,7 +45,7 @@ export class RoomsRepository implements IRepository<Room, CreateRoomDTO> {
             id: idService()
         };
 
-        const validationResult = RoomSchema.validate(room)
+        const validationResult = RoomValidationSchema.validate(room)
 
         if (validationResult.error) {
             return validationResult.error.details

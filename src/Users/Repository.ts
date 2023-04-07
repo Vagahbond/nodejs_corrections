@@ -1,39 +1,21 @@
 import Joi, { ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
-import { User, UserSchema } from './Model';
+import { User, UserValidationSchema } from './Model';
 
+type TUser = typeof User;
+export class UsersRepository implements IRepository<TUser, TUser> {
 
-export class UsersRepository implements IRepository<User, User> {
-    users: User[];
-
-    constructor() {
-        this.users = [];
-
-        // Push admin
-        this.users.push({
-            id: "f15d5fc6-1ece-4571-857d-528a98e1811f",
-            name: "Calamar",
-            surname: "Carlo",
-            username: "BigBoss",
-            password: process.env.ADMIN_PASSWORD ?? "secret",
-            role: "admin"
-        })
-
-        //remove when app ready
-        
+    async getAll(): Promise<TUser[]> {
+        return await User.find();
     }
 
-    getAll(): User[] {
-        return this.users;
+    async getOne(id: string): Promise<TUser | null>  {
+        return await User.findById(id);
     }
 
-    getOne(id: string): User | void  {
-        return this.users.find(u => u.id == id)
-    }
-
-    getOneByUsername(username: string): User | void {
-        return this.users.find(u => u.username == username);
+    async getOneByUsername(username: string): Promise<TUser | null> {
+        return await User.findOne({username});
     }
 
     deleteOne(id: string): boolean {
@@ -48,16 +30,18 @@ export class UsersRepository implements IRepository<User, User> {
         return true;
     }
 
-    createOne(object: User): void | ValidationErrorItem[] {
-        object.id = idService();
+    async createOne(object: TUser): Promise<void | ValidationErrorItem[]> {
+        
 
-        const validationResult = UserSchema.validate(object)
+        const validationResult = UserValidationSchema.validate(object)
 
         if (validationResult.error) {
             return validationResult.error.details
         }
 
-        this.users.push(object);
+        const user = new User(object);
+        
+        await user.save();
 
     }
 }

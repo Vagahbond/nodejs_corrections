@@ -3,50 +3,34 @@ import NotFoundError from '../errors/NotFoundError';
 import ValidationError from '../errors/ValidationError';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
+import { User } from '../Users/Model';
 import createReservationDTO from './dto/createReservation.dto';
 import updateReservationDto from './dto/updateReservation.dto';
-import { Reservation, ReservationSchema } from './Model';
+import { Reservation, ReservationValidationSchema } from './Model';
 
 
-export class ReservationsRepository implements IRepository<Reservation, createReservationDTO> {
-    reservations: Reservation[];
+type TReservation = typeof Reservation;
 
-    constructor() {
-        this.reservations = [];
+export class ReservationsRepository implements IRepository<TReservation, createReservationDTO> {
 
-        this.reservations.push({
-            id: "f15d5fc6-1ece-4571-857d-52938471811f",
-            dateStart: new Date(),
-            dateEnd: new Date(),
-            cancelled: false,
-            price: 1.00,
-            userId: "f15d5fc6-1ece-4571-857d-528a98e1811f",
-            roomId: "f15d5fc6-1ece-4571-857d-456a98e1811f"
-        })
-
+    async getAll(): Promise<TReservation[]> {
+        return await Reservation.find();
     }
 
-    getAll(): Reservation[] {
-        return this.reservations;
+    async getOne(id: string): Promise<TReservation | null> {
+        return await Reservation.findById(id);
     }
 
-    getOne(id: string): Reservation | void {
-        return this.reservations.find(r => r.id == id)
-    }
-
-    deleteOne(id: string): boolean {
-        const index = this.reservations.findIndex(r => r.id == id)
-
-
-        if (index == -1) {
+    async deleteOne(id: string): Promise<boolean> {
+        const result = await Reservation.findByIdAndDelete(id);
+        if (!result) {
             return false;
         }
 
-        this.reservations.splice(index, 1);
         return true;
     }
 
-    createOne(object: createReservationDTO): void | ValidationErrorItem[] {
+    async createOne(object: createReservationDTO): Promise<null | ValidationErrorItem[]> {
         const reservation: Reservation = {
             ...object,
             cancelled: false,
@@ -60,7 +44,7 @@ export class ReservationsRepository implements IRepository<Reservation, createRe
         }
 
 
-        const validationResult = ReservationSchema.validate(reservation)
+        const validationResult = ReservationValidationSchema.validate(reservation)
 
         if (validationResult.error) {
             return validationResult.error.details
@@ -70,29 +54,17 @@ export class ReservationsRepository implements IRepository<Reservation, createRe
 
     }
 
-    updateOne(id: string, updateDTO: updateReservationDto): Reservation {
-        let index = this.reservations
-            .findIndex(r => r.id == id)
-
-        if (index === -1) {
+    async updateOne(id: string, updateDTO: updateReservationDto): Promise<void> {
+        const newReservation = await Reservation.findByIdAndUpdate(id, updateDTO, { new: true })
+        
+        if (newReservation === null) {
             throw new NotFoundError("No reservation with this ID.")
         }
-
-        const newReservation = {
-            ...this.reservations[index],
-            ...updateDTO
-        }
-
-        const validateResult = ReservationSchema.validate(newReservation);
+        const validateResult = ReservationValidationSchema.validate(newReservation);
 
         if (validateResult.error) {
             throw new ValidationError("Invalid request body", validateResult.error.details)
         }
-
-        this.reservations[index] = newReservation
-
-
-        return this.reservations[index];
     }
 }
 
