@@ -4,7 +4,7 @@ services:
   db:
     image: mongo:4.2
     container_name: mongo
-    port:
+    ports:
       - 27017:27017
     volumes:
       - ./data/db:/data/db
@@ -12,3 +12,4 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: hotels
