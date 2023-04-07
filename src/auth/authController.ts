@@ -25,10 +25,12 @@ authController.post("/login", async (req, res) => {
         return
     }
 
-    const token = generateToken({
+    const token = res.jwt({
         username: user.username,
         role: user.role
-    }, res.jwt)
+    })
+        
+   
 
     res.status(200).send(token)
 
