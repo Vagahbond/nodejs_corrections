@@ -1,5 +1,6 @@
 import { Router } from "express";
 import reservationsRepository from "./Repository";
+import authMiddleware from '../middlewares/authMiddleware';
 
 const reservationsController = Router();
 
@@ -23,7 +24,7 @@ reservationsController.get("/:id", (req, res) => {
     res.status(200).send(reservation)
 })
 
-reservationsController.post("/", (req, res) => {
+reservationsController.post("/", authMiddleware(["user", "admin"]), (req, res) => {
     const errors = reservationsRepository.createOne(
         req.body
     )
@@ -57,6 +58,12 @@ reservationsController.delete("/:id", (req, res) => {
 
 })
 
+
+reservationsController.patch("/cancel",
+    authMiddleware(["user", "admin"]),
+    (req, res) => {
+        
+    })
 
 
 

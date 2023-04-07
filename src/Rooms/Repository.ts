@@ -38,7 +38,7 @@ export class RoomsRepository implements IRepository<Room, CreateRoomDTO> {
             id: idService()
         };
 
-        const validationResult = RoomSchema.validate(object)
+        const validationResult = RoomSchema.validate(room)
 
         if (validationResult.error) {
             return validationResult.error.details

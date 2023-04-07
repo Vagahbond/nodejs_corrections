@@ -1,4 +1,5 @@
 import { Router } from "express";
+import authMiddleware from "../middlewares/authMiddleware";
 import usersRepository from "./Repository";
 
 const usersController = Router();
@@ -23,7 +24,7 @@ usersController.get("/:id", (req, res) => {
     res.status(200).send(user)
 })
 
-usersController.post("/", (req, res) => {
+usersController.post("/", authMiddleware(["admin", "worker"]),(req, res) => {
     const errors = usersRepository.createOne(
         req.body
     )

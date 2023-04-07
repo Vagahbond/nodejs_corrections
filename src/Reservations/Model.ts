@@ -22,10 +22,3 @@ export const ReservationSchema = Joi.object({
     roomId: Joi.string().required().uuid()
 })
 
-
-// {
-//     "dateStart": "2023/06/06",
-//     "dateEnd": "2023/06/10",
-//     "userId": "",
-//     "roomId": "",
-// }

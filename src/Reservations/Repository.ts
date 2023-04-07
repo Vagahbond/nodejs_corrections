@@ -2,6 +2,7 @@ import Joi, { ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
 import createReservationDTO from './dto/createReservation.dto';
+import updateReservationDto from './dto/updateReservation.dto';
 import { Reservation, ReservationSchema } from './Model';
 
 
@@ -34,7 +35,7 @@ export class ReservationsRepository implements IRepository<Reservation, createRe
 
     createOne(object: createReservationDTO): void | ValidationErrorItem[] {
         const reservation: Reservation = {
-            ...object, 
+            ...object,
             cancelled: false,
             id: idService(),
             price: 1.00
@@ -54,6 +55,30 @@ export class ReservationsRepository implements IRepository<Reservation, createRe
 
         this.reservations.push(reservation);
 
+    }
+
+    updateOne(id: string, updateDTO: updateReservationDto): Reservation | ValidationErrorItem[] | void {
+        let reservation = this.reservations
+            .find(r => r.id == id)
+
+        if (reservation === undefined) {
+            return;
+        }
+
+        const newReservation = {
+            ...reservation,
+            ...updateDTO
+        }
+
+        const validateResult = ReservationSchema.validate(newReservation);
+
+        if (validateResult.error) {
+            return validateResult.error.details
+        }
+
+        reservation = newReservation;
+
+        return newReservation;
     }
 }
 

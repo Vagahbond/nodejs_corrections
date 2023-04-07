@@ -2,12 +2,14 @@ import { NextFunction, Request, Response } from "express";
 import { Role } from "../Users/Model";
 
 
-export default (
-    allowedRoles: Role[]) => {
+const generateAuthMiddleware =  (
+    allowedRoles: Role[]
+    ) => {
     return (
         req: Request,
         res: Response,
-        next: NextFunction) => {
+        next: NextFunction
+        ) => {
         const currentRole: Role = req.jwt.payload.role
 
         if (!allowedRoles.includes(currentRole)) {
@@ -21,3 +23,5 @@ export default (
 
     }
 }
+
+export default generateAuthMiddleware;
