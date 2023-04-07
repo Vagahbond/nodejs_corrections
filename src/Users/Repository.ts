@@ -1,36 +1,33 @@
 import Joi, { ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
-import { User, UserValidationSchema } from './Model';
+import { User, UserModel, UserValidationSchema } from './Model';
 
-type TUser = typeof User;
-export class UsersRepository implements IRepository<TUser, TUser> {
+export class UsersRepository implements IRepository<User, User> {
 
-    async getAll(): Promise<TUser[]> {
-        return await User.find();
+    async getAll(): Promise<User[]> {
+        return await UserModel.find();
     }
 
-    async getOne(id: string): Promise<TUser | null>  {
-        return await User.findById(id);
+    async getOne(id: string): Promise<User | null>  {
+        return await UserModel.findById(id);
     }
 
-    async getOneByUsername(username: string): Promise<TUser | null> {
-        return await User.findOne({username});
+    async getOneByUsername(username: string): Promise<User | null> {
+        return await UserModel.findOne({username});
     }
 
-    deleteOne(id: string): boolean {
-        const index = this.users.findIndex(u => u.id == id)
+    async deleteOne(id: string): Promise<boolean> {
+        const user = await UserModel.findByIdAndDelete(id);
 
-
-        if (index == -1) {
+        if (!user) {
             return false;
         }
 
-        this.users.splice(index, 1);
         return true;
     }
 
-    async createOne(object: TUser): Promise<void | ValidationErrorItem[]> {
+    async createOne(object: User): Promise<null | ValidationErrorItem[]> {
         
 
         const validationResult = UserValidationSchema.validate(object)
@@ -39,9 +36,11 @@ export class UsersRepository implements IRepository<TUser, TUser> {
             return validationResult.error.details
         }
 
-        const user = new User(object);
+        const user = new UserModel(object);
         
         await user.save();
+
+        return null;
 
     }
 }

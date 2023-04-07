@@ -4,46 +4,30 @@ import idService from '../services/idService';
 import CreateRoomDTO from './DTO/createRoom.dto';
 import { Room, RoomValidationSchema } from './Model';
 
+type TRoom = typeof Room;
 
-export class RoomsRepository implements IRepository<Room, CreateRoomDTO> {
-    rooms: Room[];
+export class RoomsRepository implements IRepository<TRoom, CreateRoomDTO> {
 
-    constructor() {
-        this.rooms = [];
-
-        this.rooms.push({
-            id: "f15d5fc6-1ece-4571-857d-456a98e1811f",
-            price: 50.00,
-            floor: 1,
-            number: 1,
-        })
+    async getAll(): Promise<TRoom[]> {
+        return await Room.find();
     }
 
-    getAll(): Room[] {
-        return this.rooms;
+    async getOne(id: string): Promise<TRoom | null> {
+        return await Room.findById(id);
     }
 
-    getOne(id: string): Room | void {
-        return this.rooms.find(r => r.id == id)
-    }
+    async deleteOne(id: string): Promise<boolean> {
+        const room = Room.findByIdAndDelete(id);
 
-    deleteOne(id: string): boolean {
-        const index = this.rooms.findIndex(r => r.id == id)
-
-
-        if (index == -1) {
+        if (room === null) {
             return false;
         }
 
-        this.rooms.splice(index, 1);
         return true;
     }
 
-    createOne(object: CreateRoomDTO): void | ValidationErrorItem[] {
-        const room = {
-            ...object,
-            id: idService()
-        };
+    async createOne(object: CreateRoomDTO): Promise<null | ValidationErrorItem[]> {
+        const room = new Room(object)
 
         const validationResult = RoomValidationSchema.validate(room)
 
@@ -51,7 +35,9 @@ export class RoomsRepository implements IRepository<Room, CreateRoomDTO> {
             return validationResult.error.details
         }
 
-        this.rooms.push(room);
+        await room.save();
+
+        return null;
 
     }
 }

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authMiddleware from "../middlewares/authMiddleware";
+import { User } from "./Model";
 import usersRepository from "./Repository";
 
 const usersController = Router();
@@ -7,12 +8,13 @@ const usersController = Router();
 usersController.get("/", (req, res) => {
     const users = usersRepository.getAll();
 
+
     res.status(200).send(users);
 })
 
-usersController.get("/:id", (req, res) => {
-    const user = usersRepository.getOne(req.params.id);
-
+usersController.get("/:id",async (req, res) => {
+    const user = await usersRepository.getOne(req.params.id);
+    
     if (!user) {
         res.status(404).send({
             status: 404,

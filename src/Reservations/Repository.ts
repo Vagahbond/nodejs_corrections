@@ -31,12 +31,12 @@ export class ReservationsRepository implements IRepository<TReservation, createR
     }
 
     async createOne(object: createReservationDTO): Promise<null | ValidationErrorItem[]> {
-        const reservation: Reservation = {
-            ...object,
-            cancelled: false,
-            id: idService(),
-            price: 1.00
-        }
+
+        // TODO: calculate price
+
+        const reservation = new Reservation({
+            object
+        })
 
         if (object.dateStart > object.dateEnd
             || object.dateStart < new Date()) {
@@ -50,7 +50,9 @@ export class ReservationsRepository implements IRepository<TReservation, createR
             return validationResult.error.details
         }
 
-        this.reservations.push(reservation);
+        await reservation.save();
+
+        return null;
 
     }
 
