@@ -7,7 +7,6 @@ const authController = Router();
 
 authController.post("/login", async (req, res) => {
     const user = await usersRepository.getOneByUsername(req.body.username)
-
     if (!user) {
         res.status(404).send({
             status: 404,

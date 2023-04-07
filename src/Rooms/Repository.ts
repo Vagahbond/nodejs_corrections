@@ -1,18 +1,18 @@
-import Joi, { ValidationErrorItem } from 'joi';
+import Joi, { ValidationError, ValidationErrorItem } from 'joi';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
 import CreateRoomDTO from './DTO/createRoom.dto';
-import { Room, RoomValidationSchema } from './Model';
+import Room, { IRoom, RoomValidationSchema } from './Model';
 
-type TRoom = typeof Room;
 
-export class RoomsRepository implements IRepository<TRoom, CreateRoomDTO> {
 
-    async getAll(): Promise<TRoom[]> {
+export class RoomsRepository implements IRepository<IRoom, CreateRoomDTO> {
+
+    async getAll(): Promise<IRoom[]> {
         return await Room.find();
     }
 
-    async getOne(id: string): Promise<TRoom | null> {
+    async getOne(id: string): Promise<IRoom | null> {
         return await Room.findById(id);
     }
 

@@ -1,11 +1,10 @@
 import Joi from 'joi';
-import { InferSchemaType } from 'mongoose';
+import { Document, InferSchemaType } from 'mongoose';
 import mongoose from '../services/mongooseService';
 
 export type Role = 'admin' | 'user' | 'worker';
 
-interface IUser {
-    id: string;
+export interface IUser extends Document{
     name: string;
     surname: string;
     username: string;
@@ -14,7 +13,6 @@ interface IUser {
 }
 
 export const UserValidationSchema = Joi.object({
-    id: Joi.string().uuid().required(),
     name: Joi.string().required(),
     surname: Joi.string().required(),
     username: Joi.string().alphanum().required(),
@@ -23,7 +21,6 @@ export const UserValidationSchema = Joi.object({
 });
 
 export const UserSchema = new mongoose.Schema<IUser>({
-    id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     surname: { type: String, required: true },
     username: { type: String, required: true, unique: true },
@@ -31,5 +28,4 @@ export const UserSchema = new mongoose.Schema<IUser>({
     role: { type: String, required: true, enum: ['admin', 'user', 'worker'] },
 })
 
-export type User = InferSchemaType<typeof UserSchema>;
-export const UserModel = mongoose.model('User', UserSchema)
+export default mongoose.model<IUser>('User', UserSchema)

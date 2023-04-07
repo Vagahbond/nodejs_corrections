@@ -1,19 +1,27 @@
 import Joi from 'joi'
-import { Room } from '../Rooms/Model';
-import { User } from '../Users/Model';
+import Room from '../Rooms/Model';
+import User  from '../Users/Model';
 import mongoose from '../services/mongooseService';
 
+export interface IReservation extends Document {
+    dateStart: Date;
+    dateEnd: Date;
+    price: number;
+    cancelled: boolean;
+    userId: string;
+    roomId: string;
+}
+
 export const ReservationValidationSchema = Joi.object({
-    dateStart: Joi.date().required(),
     dateEnd: Joi.date().required(),
-    price: Joi.number().positive().required(),
-    cancelled: Joi.boolean().required(),
+    dateStart: Joi.date().required(),
+    price: Joi.number().positive().optional(),
+    cancelled: Joi.boolean().optional(),
     userId: Joi.string().required().uuid(),
     roomId: Joi.string().required().uuid()
 })
 
 export const ReservationSchema = new mongoose.Schema({
-    id: { type: String, required: true, unique: true },
     dateStart: { type: Date, required: true },
     dateEnd: { type: Date, required: true },
     price: { type: Number, required: true },
@@ -22,5 +30,5 @@ export const ReservationSchema = new mongoose.Schema({
     roomId: { type: String, required: true, ref: Room }
 })
 
-export const Reservation = mongoose.model('Reservation', ReservationSchema);
+export default mongoose.model<IReservation>('Reservation', ReservationSchema);
 

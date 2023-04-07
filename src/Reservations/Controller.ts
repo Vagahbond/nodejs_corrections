@@ -26,8 +26,8 @@ reservationsController.get("/:id", (req, res) => {
     res.status(200).send(reservation)
 })
 
-reservationsController.post("/", authMiddleware(["user", "admin"]), (req, res) => {
-    const errors = reservationsRepository.createOne(
+reservationsController.post("/", authMiddleware(["user", "admin"]), async (req, res) => {
+    const errors = await reservationsRepository.createOne(
         req.body
     )
 
@@ -46,8 +46,8 @@ reservationsController.post("/", authMiddleware(["user", "admin"]), (req, res) =
     })
 })
 
-reservationsController.delete("/:id", (req, res) => {
-    if (reservationsRepository.deleteOne(req.params.id)) {
+reservationsController.delete("/:id",async (req, res) => {
+    if (await reservationsRepository.deleteOne(req.params.id)) {
         res.status(204).send()
         return;
     } else {

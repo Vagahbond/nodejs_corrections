@@ -1,4 +1,4 @@
-import { ValidationErrorItem } from "joi";
+import { ValidationError, ValidationErrorItem } from "joi";
 
 export default interface Repository<T, CREATE_DTO_T> {
     getAll(): Promise<T[]>;

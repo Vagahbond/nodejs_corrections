@@ -2,7 +2,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import authController from './auth/authController';
 import reservationsController from './Reservations/Controller';
-import roomsController from './Rooms/Contoller';
+import roomsController from './Rooms/Controller';
 import usersController from './Users/Controller';
 import jwt from "jwt-express"
 import configService from './services/configService';
@@ -18,8 +18,8 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 })
 
-app.use("/reservations", jwt.active(), reservationsController)
-app.use("/users", jwt.active(), usersController)
+app.use("/reservations", reservationsController)
+app.use("/users", usersController)
 app.use("/rooms", roomsController)
 app.use("/auth", authController)
 

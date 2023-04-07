@@ -13,10 +13,10 @@ class ConfigService {
     constructor() {
         this.JWT_SECRET = process.env.JWT_SECRET ?? "secret";
 
-        this.MONGO_DB = process.env.MONGO_DB ?? "hotel";
+        this.MONGO_DB = process.env.MONGO_DB ?? "hotels";
         this.MONGO_HOST = process.env.MONGO_HOST ?? "localhost";
         this.MONGO_PORT = process.env.MONGO_PORT ?? "27017";
-        this.MONGO_USER = process.env.MONFO_SER ?? "admin";
+        this.MONGO_USER = process.env.MONGO_USER ?? "admin";
         this.MONGO_PASSWORD = process.env.MONG_PASSWORD ?? "admin";
     }
 }

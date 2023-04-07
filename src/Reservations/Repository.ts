@@ -1,23 +1,22 @@
-import Joi, { ValidationErrorItem } from 'joi';
+import Joi, { ValidationError, ValidationErrorItem } from 'joi';
 import NotFoundError from '../errors/NotFoundError';
-import ValidationError from '../errors/ValidationError';
 import IRepository from '../interfaces/IRepository'
 import idService from '../services/idService';
-import { User } from '../Users/Model';
+import User  from '../Users/Model';
 import createReservationDTO from './dto/createReservation.dto';
 import updateReservationDto from './dto/updateReservation.dto';
-import { Reservation, ReservationValidationSchema } from './Model';
+import Reservation, { IReservation, ReservationValidationSchema } from './Model';
 
 
 type TReservation = typeof Reservation;
 
-export class ReservationsRepository implements IRepository<TReservation, createReservationDTO> {
+export class ReservationsRepository implements IRepository<IReservation, createReservationDTO> {
 
-    async getAll(): Promise<TReservation[]> {
+    async getAll(): Promise<IReservation[]> {
         return await Reservation.find();
     }
 
-    async getOne(id: string): Promise<TReservation | null> {
+    async getOne(id: string): Promise<IReservation | null> {
         return await Reservation.findById(id);
     }
 
@@ -44,7 +43,7 @@ export class ReservationsRepository implements IRepository<TReservation, createR
         }
 
 
-        const validationResult = ReservationValidationSchema.validate(reservation)
+        const validationResult = ReservationValidationSchema.validate(object)
 
         if (validationResult.error) {
             return validationResult.error.details
@@ -56,7 +55,7 @@ export class ReservationsRepository implements IRepository<TReservation, createR
 
     }
 
-    async updateOne(id: string, updateDTO: updateReservationDto): Promise<void> {
+    async updateOne(id: string, updateDTO: updateReservationDto): Promise<void | ValidationError> {
         const newReservation = await Reservation.findByIdAndUpdate(id, updateDTO, { new: true })
         
         if (newReservation === null) {
@@ -65,7 +64,7 @@ export class ReservationsRepository implements IRepository<TReservation, createR
         const validateResult = ReservationValidationSchema.validate(newReservation);
 
         if (validateResult.error) {
-            throw new ValidationError("Invalid request body", validateResult.error.details)
+            return validateResult.error
         }
     }
 }

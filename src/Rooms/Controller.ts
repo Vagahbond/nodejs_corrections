@@ -44,8 +44,8 @@ roomsController.post("/", authMiddleware(["admin"]), (req, res) => {
     })
 })
 
-roomsController.delete("/:id", authMiddleware(["admin"]), (req, res) => {
-    if (roomsRepository.deleteOne(req.params.id)) {
+roomsController.delete("/:id", authMiddleware(["admin"]), async (req, res) => {
+    if (await roomsRepository.deleteOne(req.params.id)) {
         res.status(204).send()
         return;
     } else {
